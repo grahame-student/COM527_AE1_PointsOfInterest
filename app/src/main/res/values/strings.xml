@@ -3,4 +3,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_blank_map_fragment">empty map</string>
+    <string name="lblPoiName">Name</string>
+    <string name="lblPoiType">Type</string>
+    <string name="lblPoiPrice">Price per night</string>
+    <string name="btnAddPoi">Add Point</string>
+    <string name="btnCancel">Cancel</string>
+    <string name="btnAdd">Add</string>
 </resources>

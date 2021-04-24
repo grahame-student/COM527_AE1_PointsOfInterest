@@ -9,7 +9,7 @@
         android:id="@+id/mapFragment"
         android:name="com.example.pointsofinterest.screens.map.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/map_fragment" >
+        tools:layout="@layout/map_fragment">
         <action
             android:id="@+id/action_mapFragment_to_poiFragment"
             app:destination="@id/poiFragment" />
@@ -18,7 +18,7 @@
         android:id="@+id/poiFragment"
         android:name="com.example.pointsofinterest.screens.poi.PoiFragment"
         android:label="fragment_poi"
-        tools:layout="@layout/poi_fragment" >
+        tools:layout="@layout/poi_fragment">
         <action
             android:id="@+id/action_poiFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
