@@ -19,7 +19,6 @@ class MapViewModel : ViewModel() {
         Log.i("MapViewModel", "MapViewModel destroyed!")
     }
 
-    // Countdown time
     private val _eventStartAddingPoi = MutableLiveData<Boolean>()
     val eventStartAddingPoi: LiveData<Boolean>
         get() = _eventStartAddingPoi
