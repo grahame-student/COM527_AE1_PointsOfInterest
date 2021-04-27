@@ -31,17 +31,17 @@ class MapFragment : Fragment(), LocationListener {
     private lateinit var viewModel: MapViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
 
         Log.i("MapFragment", "Called ViewModelProvider.get")
         viewModel = ViewModelProvider(this).get(MapViewModel::class.java)
         binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.map_fragment,
-            container,
-            false
+                inflater,
+                R.layout.map_fragment,
+                container,
+                false
         )
 
         // Set up the viewModel binding so that it can handle events defined in the layout
@@ -93,14 +93,14 @@ class MapFragment : Fragment(), LocationListener {
         if (permission == PackageManager.PERMISSION_GRANTED) {
             Log.i("MapFragment", "Starting to monitor location")
             val locationManager =
-                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
         } else {
             Log.i("MapFragment", "Access to fine location denied")
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.i(
-                    "MapFragment",
-                    "Permission was previously denied, show rationale for the permission"
+                        "MapFragment",
+                        "Permission was previously denied, show rationale for the permission"
                 )
                 showRationale()
             } else {
@@ -116,7 +116,7 @@ class MapFragment : Fragment(), LocationListener {
         val context = context ?: return
         val builder = AlertDialog.Builder(context)
         builder.setMessage("Permission to access your fine location is required so that nearby points of interest can be identified")
-            .setTitle("Permission Required")
+                .setTitle("Permission Required")
         builder.setPositiveButton("OK") { _, _ ->
             Log.i("MapFragment", "User has read location permission rationale")
             requestFineLocationPermission()
@@ -130,18 +130,18 @@ class MapFragment : Fragment(), LocationListener {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
+            requestCode: Int, permissions: Array<String>,
+            grantResults: IntArray
     ) {
         when (requestCode) {
             gpsPermissionCode -> {
                 if (grantResults.isEmpty() ||
-                    (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) &&
-                    (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                        (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) &&
+                        (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ) {
                     Log.i(
-                        "MapFragment",
-                        "User has granted permission to allow access to fine location"
+                            "MapFragment",
+                            "User has granted permission to allow access to fine location"
                     )
                     monitorLocation()
                 }
@@ -155,10 +155,10 @@ class MapFragment : Fragment(), LocationListener {
         // the location instead.
         viewModel.setCurrentLocation(newLoc)
         binding.map1.controller.setCenter(
-            GeoPoint(
-                viewModel.getCurrentLocation().latitude,
-                viewModel.getCurrentLocation().longitude
-            )
+                GeoPoint(
+                        viewModel.getCurrentLocation().latitude,
+                        viewModel.getCurrentLocation().longitude
+                )
         )
     }
 
