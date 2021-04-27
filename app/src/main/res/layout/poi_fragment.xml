@@ -33,7 +33,8 @@
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lblPoiName" />
+            app:layout_constraintTop_toBottomOf="@id/lblPoiName"
+            />
 
         <TextView
             android:id="@+id/lblPoiType"
@@ -55,25 +56,25 @@
             app:layout_constraintTop_toBottomOf="@id/lblPoiType" />
 
         <TextView
-            android:id="@+id/lblPoiPrice"
+            android:id="@+id/lblPoiDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lblPoiPrice"
+            android:text="@string/lblPoiDescription"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cboPoiType" />
 
         <EditText
-            android:id="@+id/txtPoiPrice"
+            android:id="@+id/txtPoiDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:text="0.00"
+            android:layout_height="0dp"
+            android:inputType="textMultiLine"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lblPoiPrice" />
+            app:layout_constraintBottom_toTopOf="@id/btnAddPoi"
+            app:layout_constraintTop_toBottomOf="@id/lblPoiDescription" />
 
         <Button
             android:id="@+id/btnCancel"
@@ -81,6 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/btnCancel"
             android:textSize="12pt"
+            android:onClick="@{() -> poiViewModel.cancelAddLocation()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnAddPoi"
             app:layout_constraintHorizontal_bias="0.5"
@@ -92,6 +94,7 @@
             android:layout_height="wrap_content"
             android:text="@string/btnAdd"
             android:textSize="12pt"
+            android:onClick="@{() -> poiViewModel.addLocation()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

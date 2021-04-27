@@ -33,7 +33,7 @@ class MapFragment : Fragment(), LocationListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         Log.i("MapFragment", "Called ViewModelProvider.get")
         viewModel = ViewModelProvider(this).get(MapViewModel::class.java)

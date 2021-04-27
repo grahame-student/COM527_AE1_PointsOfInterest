@@ -1,7 +1,7 @@
 package com.example.pointsofinterest.data.dao
 
-import PointOfInterest
 import androidx.room.*
+import com.example.pointsofinterest.data.dto.PointOfInterest
 
 @Dao
 interface PointOfInterestDao {
