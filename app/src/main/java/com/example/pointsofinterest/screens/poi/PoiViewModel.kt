@@ -39,7 +39,6 @@ class PoiViewModel(private val dataSource: PointOfInterestDao, application: Appl
     }
 
     fun addLocation() {
-        Log.i("PoiViewModel", "Add Location - name: ${name.value}, type: ${type.value}, description: ${description.value}")
         viewModelScope.launch {
             val point = PointOfInterest()
             point.name = _name.value.toString()
@@ -54,6 +53,7 @@ class PoiViewModel(private val dataSource: PointOfInterestDao, application: Appl
 
     private suspend fun insert(point: PointOfInterest) {
         withContext(Dispatchers.IO) {
+            Log.i("PoiViewModel", "Add Location - name: ${point.name}, type: ${point.type}, description: ${point.description}, location: ${point.lon}, ${point.lat}")
             dataSource.insert(point)
         }
     }
