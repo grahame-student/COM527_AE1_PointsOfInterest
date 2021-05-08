@@ -6,4 +6,5 @@
     <string name="btnAddPoi">Add Point</string>
     <string name="btnCancel">Cancel</string>
     <string name="btnAdd">Add</string>
+    <string name="lblPrefUploadPoi">Upload point to the cloud</string>
 </resources>

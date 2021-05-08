@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.pointsofinterest.R
+import com.example.pointsofinterest.data.PointOfInterestDatabase
 import com.example.pointsofinterest.databinding.MapFragmentBinding
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.ItemizedIconOverlay
@@ -31,18 +32,22 @@ class MapFragment : Fragment(), LocationListener {
     private lateinit var viewModel: MapViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
 
         Log.i("MapFragment", "Called ViewModelProvider.get")
-        viewModel = ViewModelProvider(this).get(MapViewModel::class.java)
         binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.map_fragment,
-                container,
-                false
+            inflater,
+            R.layout.map_fragment,
+            container,
+            false
         )
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = PointOfInterestDatabase.getInstance(application).pointDao()
+        val viewModelFactory = MapViewModelFactory(dataSource, application)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MapViewModel::class.java)
 
         // Set up the viewModel binding so that it can handle events defined in the layout
         binding.mapViewModel = viewModel
@@ -51,8 +56,16 @@ class MapFragment : Fragment(), LocationListener {
         // This is used so that the binding can observe LiveData updates
         binding.lifecycleOwner = viewLifecycleOwner
 
+        // User wants to create a new poi
         viewModel.eventStartAddingPoi.observe(viewLifecycleOwner, { isAddingPoi ->
             if (isAddingPoi) addNewPoi()
+        })
+
+        // Monitor for changes to the list of stored 'poi's
+        // Events are also fired when the fragment resumes, which is useful for when we return
+        // from having configured the new poi in the pio Fragment
+        viewModel.poiList.observe(viewLifecycleOwner, {
+            updateMapOverlay()
         })
 
         return binding.root
@@ -61,7 +74,31 @@ class MapFragment : Fragment(), LocationListener {
     private fun addNewPoi() {
         Log.i("MapFragment", "Navigating to the PoiFragment")
         view?.findNavController()?.navigate(R.id.action_mapFragment_to_poiFragment)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("MapFragment", "Add Poi event completed")
         viewModel.onAddingPoiComplete()
+    }
+
+    private fun updateMapOverlay() {
+        // The context is null until onCreateView() completes. If, somehow, we get here before
+        // then we simply exit. Logging could be added before returning to help with debugging
+        val context = context ?: return
+        val newOverlay = ItemizedIconOverlay(context, arrayListOf<OverlayItem>(), null)
+
+        val poiList = viewModel.poiList.value
+        if (poiList != null) {
+            for (poi in poiList) {
+                val marker = OverlayItem(poi.name, poi.description, GeoPoint(poi.lat, poi.lon))
+                newOverlay.addItem(marker)
+            }
+        }
+
+        Log.i("MapFragment", "Replacing map overlay")
+        binding.map1.overlays.clear()
+        binding.map1.overlays.add(newOverlay)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,14 +111,8 @@ class MapFragment : Fragment(), LocationListener {
     }
 
     private fun configureMap() {
-        // The context is null until onCreateView() completes. If, somehow, we get here before
-        // then we simply exit. Logging could be added before returning to help with debugging
-        val context = context ?: return
-
-        val items = ItemizedIconOverlay(context, arrayListOf<OverlayItem>(), null)
-
         binding.map1.controller.setZoom(14.0)
-        binding.map1.overlays.add(items)
+        updateMapOverlay()
     }
 
     private fun monitorLocation() {
@@ -93,14 +124,14 @@ class MapFragment : Fragment(), LocationListener {
         if (permission == PackageManager.PERMISSION_GRANTED) {
             Log.i("MapFragment", "Starting to monitor location")
             val locationManager =
-                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
         } else {
             Log.i("MapFragment", "Access to fine location denied")
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.i(
-                        "MapFragment",
-                        "Permission was previously denied, show rationale for the permission"
+                    "MapFragment",
+                    "Permission was previously denied, show rationale for the permission"
                 )
                 showRationale()
             } else {
@@ -116,7 +147,7 @@ class MapFragment : Fragment(), LocationListener {
         val context = context ?: return
         val builder = AlertDialog.Builder(context)
         builder.setMessage("Permission to access your fine location is required so that nearby points of interest can be identified")
-                .setTitle("Permission Required")
+            .setTitle("Permission Required")
         builder.setPositiveButton("OK") { _, _ ->
             Log.i("MapFragment", "User has read location permission rationale")
             requestFineLocationPermission()
@@ -130,18 +161,18 @@ class MapFragment : Fragment(), LocationListener {
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int, permissions: Array<String>,
-            grantResults: IntArray
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
             gpsPermissionCode -> {
-                if (grantResults.isEmpty() ||
-                        (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) &&
-                        (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.isNotEmpty() &&
+                    (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) &&
+                    (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ) {
                     Log.i(
-                            "MapFragment",
-                            "User has granted permission to allow access to fine location"
+                        "MapFragment",
+                        "User has granted permission to allow access to fine location"
                     )
                     monitorLocation()
                 }
@@ -155,10 +186,10 @@ class MapFragment : Fragment(), LocationListener {
         // the location instead.
         viewModel.setCurrentLocation(newLoc)
         binding.map1.controller.setCenter(
-                GeoPoint(
-                        viewModel.getCurrentLocation().latitude,
-                        viewModel.getCurrentLocation().longitude
-                )
+            GeoPoint(
+                viewModel.getCurrentLocation().latitude,
+                viewModel.getCurrentLocation().longitude
+            )
         )
     }
 

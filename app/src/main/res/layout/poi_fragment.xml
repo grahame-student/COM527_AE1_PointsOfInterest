@@ -15,10 +15,12 @@
         android:layout_height="match_parent"
         tools:context=".screens.poi.PoiFragment">
 
+        <!-- POI Name -->
         <TextView
             android:id="@+id/lblPoiName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:labelFor="@id/txtPoiName"
             android:text="@string/lblPoiName"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -29,6 +31,7 @@
             android:id="@+id/txtPoiName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/lblPoiName"
             android:inputType="text"
             android:text="@={poiViewModel.name}"
             android:textSize="12pt"
@@ -36,10 +39,12 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lblPoiName" />
 
+        <!-- POI Type -->
         <TextView
             android:id="@+id/lblPoiType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:labelFor="@id/txtPoiType"
             android:text="@string/lblPoiType"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -50,26 +55,53 @@
             android:id="@+id/txtPoiType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="@string/lblPoiType"
+            android:inputType="text"
             android:text="@={poiViewModel.type}"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lblPoiType" />
 
+        <!-- POI Upload Preference -->
         <TextView
-            android:id="@+id/lblPoiDescription"
+            android:id="@+id/lblPrefUploadPoi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lblPoiDescription"
+            android:labelFor="@id/chkPrefUploadPoi"
+            android:text="@string/lblPrefUploadPoi"
             android:textSize="12pt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txtPoiType" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/chkPrefUploadPoi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="@={poiViewModel.uploadPref}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblPrefUploadPoi" />
+
+        <!-- POI Description -->
+        <TextView
+            android:id="@+id/lblPoiDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/txtPoiDescription"
+            android:text="@string/lblPoiDescription"
+            android:textSize="12pt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chkPrefUploadPoi" />
+
         <EditText
             android:id="@+id/txtPoiDescription"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:autofillHints="@string/lblPoiDescription"
+            android:gravity="top|start"
             android:inputType="textMultiLine"
             android:text="@={poiViewModel.description}"
             android:textSize="12pt"
@@ -78,6 +110,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lblPoiDescription" />
 
+        <!-- POI Dialogue Buttons -->
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="0dp"

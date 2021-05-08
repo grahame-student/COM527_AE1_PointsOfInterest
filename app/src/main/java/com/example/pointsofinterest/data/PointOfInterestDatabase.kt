@@ -18,10 +18,10 @@ public abstract class PointOfInterestDatabase : RoomDatabase() {
             var tmpInstance = instance
             if (tmpInstance == null) {
                 tmpInstance = Room.databaseBuilder(
-                        ctx.applicationContext,
-                        PointOfInterestDatabase::class.java,
-                        "pointOfInterestDatabase"
-                ).build()
+                    ctx.applicationContext,
+                    PointOfInterestDatabase::class.java,
+                    "pointOfInterestDatabase"
+                ).fallbackToDestructiveMigration().build()
                 instance = tmpInstance
             }
             return tmpInstance

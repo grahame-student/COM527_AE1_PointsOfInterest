@@ -6,17 +6,17 @@ import com.example.pointsofinterest.data.dto.PointOfInterest
 @Dao
 interface PointOfInterestDao {
     @Query("SELECT * FROM points_of_interest WHERE id=:id")
-    fun getPointOfInterestById(id: Long): PointOfInterest
+    suspend fun getPointOfInterestById(id: Long): PointOfInterest
 
     @Query("SELECT * FROM points_of_interest")
-    fun getAllPointsOfInterest(): List<PointOfInterest>
+    suspend fun getAllPointsOfInterest(): List<PointOfInterest>
 
     @Insert
-    fun insert(point: PointOfInterest): Long
+    suspend fun insert(point: PointOfInterest): Long
 
     @Update
-    fun update(point: PointOfInterest): Int
+    suspend fun update(point: PointOfInterest): Int
 
     @Delete
-    fun delete(point: PointOfInterest): Int
+    suspend fun delete(point: PointOfInterest): Int
 }
