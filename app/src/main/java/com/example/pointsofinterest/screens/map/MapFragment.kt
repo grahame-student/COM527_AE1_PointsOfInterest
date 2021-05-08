@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.pointsofinterest.R
 import com.example.pointsofinterest.data.PointOfInterestDatabase
+import com.example.pointsofinterest.data.api.ApiService
+import com.example.pointsofinterest.data.api.RemoteDataSource
 import com.example.pointsofinterest.databinding.MapFragmentBinding
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.ItemizedIconOverlay
@@ -46,7 +48,8 @@ class MapFragment : Fragment(), LocationListener {
 
         val application = requireNotNull(this.activity).application
         val dataSource = PointOfInterestDatabase.getInstance(application).pointDao()
-        val viewModelFactory = MapViewModelFactory(dataSource, application)
+        val remoteSource = ApiService.getPoiServiceInstance()
+        val viewModelFactory = MapViewModelFactory(dataSource, remoteSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MapViewModel::class.java)
 
         // Set up the viewModel binding so that it can handle events defined in the layout

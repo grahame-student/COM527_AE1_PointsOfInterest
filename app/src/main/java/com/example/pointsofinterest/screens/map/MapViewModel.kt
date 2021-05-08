@@ -7,27 +7,44 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.pointsofinterest.data.api.PoiApiService
 import com.example.pointsofinterest.data.dao.DaoFactoryImpl
 import com.example.pointsofinterest.data.dao.PointOfInterestDao
 import com.example.pointsofinterest.data.dto.PointOfInterest
 import kotlinx.coroutines.launch
 
-class MapViewModel(private val dataSource: PointOfInterestDao, application: Application) :
+class MapViewModel(
+    private val dataSource: PointOfInterestDao,
+    private val remoteSource: PoiApiService,
+    application: Application
+) :
     AndroidViewModel(application) {
     private val locationDao = DaoFactoryImpl.locationDao
     private val _poiList = MutableLiveData<List<PointOfInterest>>()
+    private val _poiListLocal = MutableLiveData<List<PointOfInterest>>()
+    private val _poiListRemote = MutableLiveData<List<PointOfInterest>>()
+    private val _eventStartAddingPoi = MutableLiveData<Boolean>()
 
     val poiList: MutableLiveData<List<PointOfInterest>>
         get() = _poiList
+
+    val eventStartAddingPoi: LiveData<Boolean>
+        get() = _eventStartAddingPoi
 
     init {
         Log.i("MapViewModel", "MapViewModel created!")
         updatePoiList()
     }
 
-    private val _eventStartAddingPoi = MutableLiveData<Boolean>()
-    val eventStartAddingPoi: LiveData<Boolean>
-        get() = _eventStartAddingPoi
+    private fun updatePoiList() {
+        viewModelScope.launch {
+            _poiListLocal.value = dataSource.getAllPointsOfInterest()
+            remoteSource.getAllPointsOfInterest()
+//            _poiListRemote.value = remoteSource.getAllPointsOfInterest().value
+            _poiList.value = _poiListLocal.value.orEmpty() + _poiListRemote.value.orEmpty()
+        }
+    }
+
 
     fun setCurrentLocation(newLoc: Location) {
         locationDao.setCurrentLocation(newLoc)
@@ -48,11 +65,5 @@ class MapViewModel(private val dataSource: PointOfInterestDao, application: Appl
 
     fun onAddingPoiComplete() {
         _eventStartAddingPoi.value = false
-    }
-
-    fun updatePoiList() {
-        viewModelScope.launch {
-            _poiList.value = dataSource.getAllPointsOfInterest()
-        }
     }
 }
