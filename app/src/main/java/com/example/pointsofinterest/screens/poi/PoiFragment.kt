@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.pointsofinterest.R
 import com.example.pointsofinterest.data.PointOfInterestDatabase
+import com.example.pointsofinterest.data.api.ApiService
 import com.example.pointsofinterest.databinding.PoiFragmentBinding
 
 class PoiFragment : Fragment() {
@@ -31,7 +32,8 @@ class PoiFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val dataSource = PointOfInterestDatabase.getInstance(application).pointDao()
-        val viewModelFactory = PoiViewModelFactory(dataSource, application)
+        val remoteSource = ApiService.getPoiServiceInstance()
+        val viewModelFactory = PoiViewModelFactory(dataSource, remoteSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(PoiViewModel::class.java)
 
         // Set up the viewModel binding so that it can handle events defined in the layout

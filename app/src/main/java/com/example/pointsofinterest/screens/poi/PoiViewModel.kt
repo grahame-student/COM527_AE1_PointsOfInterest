@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
+import com.example.pointsofinterest.data.api.PoiApiService
 import com.example.pointsofinterest.data.dao.DaoFactoryImpl
 import com.example.pointsofinterest.data.dao.PointOfInterestDao
 import com.example.pointsofinterest.data.dto.PointOfInterest
@@ -15,7 +16,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PoiViewModel(private val dataSource: PointOfInterestDao, application: Application) :
+class PoiViewModel(
+    private val dataSource: PointOfInterestDao,
+    private val remoteSource: PoiApiService,
+    application: Application
+) :
     AndroidViewModel(application) {
     private val locationDao = DaoFactoryImpl.getLocationDao()
     private val prefs: SharedPreferences
@@ -84,11 +89,14 @@ class PoiViewModel(private val dataSource: PointOfInterestDao, application: Appl
         editor.apply()
     }
 
-    private fun uploadPoint(point: PointOfInterest) {
-        if (_uploadPref.value == true) {
-            Log.i("PoiViewModel", "Uploading new poi to the cloud")
-        } else {
-            Log.i("PoiViewModel", "No upload required, skipping")
+    private suspend fun uploadPoint(point: PointOfInterest) {
+        withContext(Dispatchers.IO) {
+            if (_uploadPref.value == true) {
+                Log.i("PoiViewModel", "Uploading new poi to the cloud")
+                remoteSource.addPointOfInterest(point)
+            } else {
+                Log.i("PoiViewModel", "No upload required, skipping")
+            }
         }
     }
 
