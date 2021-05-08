@@ -33,18 +33,29 @@ class MapViewModel(
 
     init {
         Log.i("MapViewModel", "MapViewModel created!")
-        updatePoiList()
+
+        // When the remote source changes make sure that the publicly exposed list is updated
+        remoteSource.pointOfInterestList.observeForever {
+            _poiListRemote.value = remoteSource.pointOfInterestList.value
+            combinePoiLists()
+        }
+        updatePoiLists()
     }
 
-    private fun updatePoiList() {
+    private fun combinePoiLists() {
+        // combine the local and remote POI lists and remove the duplicate elements
+        _poiList.value = (_poiListLocal.value.orEmpty() + _poiListRemote.value.orEmpty())
+            .distinct()
+            .toList()
+    }
+
+    private fun updatePoiLists() {
         viewModelScope.launch {
             _poiListLocal.value = dataSource.getAllPointsOfInterest()
             remoteSource.getAllPointsOfInterest()
-//            _poiListRemote.value = remoteSource.getAllPointsOfInterest().value
-            _poiList.value = _poiListLocal.value.orEmpty() + _poiListRemote.value.orEmpty()
+            combinePoiLists()
         }
     }
-
 
     fun setCurrentLocation(newLoc: Location) {
         locationDao.setCurrentLocation(newLoc)
