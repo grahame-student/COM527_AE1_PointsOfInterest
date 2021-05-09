@@ -7,4 +7,6 @@
     <string name="btnCancel">Cancel</string>
     <string name="btnAdd">Add</string>
     <string name="lblPrefUploadPoi">Upload point to the cloud</string>
+    <string name="navMap">Current location</string>
+    <string name="navPoi">Add new point of interest</string>
 </resources>
